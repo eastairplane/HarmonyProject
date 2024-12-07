@@ -11,12 +11,10 @@ struct Index {
   build() {
     RelativeContainer() {
       Text(this.message)
-        .id('HelloWorld')
-        .fontSize(50)
-        .fontWeight(FontWeight.Bold)
-        .alignRules({
-          center: { anchor: '__container__', align: VerticalAlign.Center },
-          middle: { anchor: '__container__', align: HorizontalAlign.Center }
+      Button('Send Message')
+        .onClick(() => {
+          this.message = 'Message Sent';
+          connectMQTT().publish('topic/test', 'Message Sent');
         })
     }
     .height('100%')

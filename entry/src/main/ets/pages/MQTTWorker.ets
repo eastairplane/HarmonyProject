@@ -3,7 +3,13 @@ import { MqttMessage, MqttResponse } from '@ohos/mqtt';
 import { MQTT } from '../util/MQTT';
 import { promptAction } from '@kit.ArkUI';
 
+// @kit.ArkTS 提供了工作线程相关的功能。
+// @ohos/mqtt 提供了 MQTT 消息和响应的类型。
+// ../util/MQTT 导入了自定义的 MQTT 类。
+// @kit.ArkUI 提供了用户界面相关的功能
+
 const workerPort: ThreadWorkerGlobalScope = worker.workerPort;
+//workerPort 是工作线程与主线程通信的端口
 
 /**
  * Defines the event handler to be called when the worker thread receives a message sent by the host thread.
@@ -18,6 +24,11 @@ workerPort.onmessage = (e: MessageEvents) => {
   } else
   mqtt.pushMessage("testtopic/test",JSON.stringify(e.data))
 }
+/*
+当工作线程接收到主线程发送的消息时执行。
+如果消息内容为 "close"，则销毁 MQTT 连接并关闭工作线程。
+否则，将消息内容作为 MQTT 消息发送到指定的主题 
+*/
 
 /**
  * Defines the event handler to be called when the worker receives a message that cannot be deserialized.

@@ -1,6 +1,6 @@
 import { ErrorEvent, MessageEvents, ThreadWorkerGlobalScope, worker } from '@kit.ArkTS';
 import { MqttMessage, MqttResponse } from '@ohos/mqtt';
-import { MQTT } from '../util/MQTT';
+import { MQTT } from './MQTT';
 import { promptAction } from '@kit.ArkUI';
 
 // @kit.ArkTS 提供了工作线程相关的功能。

@@ -1,11 +1,12 @@
-import { connectMQTT } from './MQTT';
+import { MQTT } from './MQTT';
+const connectMQTT=new (MQTT)
 @Entry
 @Component
 struct Index {
   @State message: string = 'Hello World';
 
   onInit() {
-    connectMQTT();
+    connectMQTT.connect('admin','12341234');
   }
 
   build() {
@@ -14,7 +15,8 @@ struct Index {
       Button('Send Message')
         .onClick(() => {
           this.message = 'Message Sent';
-          connectMQTT().publish('topic/test', 'Message Sent');
+          connectMQTT.subscribe('testtopic', 1);
+
         })
     }
     .height('100%')

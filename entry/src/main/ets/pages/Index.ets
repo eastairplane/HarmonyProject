@@ -1,7 +1,12 @@
+import { connectMQTT } from './MQTT.ets';
 @Entry
 @Component
 struct Index {
   @State message: string = 'Hello World';
+
+  onInit() {
+    connectMQTT();
+  }
 
   build() {
     RelativeContainer() {

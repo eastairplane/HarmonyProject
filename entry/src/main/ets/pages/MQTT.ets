@@ -1,28 +1,54 @@
-import mqtt from '@ohos.mqtt';
+import { MqttAsync, MqttClient, MqttMessage, MqttQos, MqttResponse } from '@ohos/mqtt'
 
-export function connectMQTT() {
-    const client = mqtt.connect('mqtt://broker.hivemq.com:1883');
+class MqttInstance {
+  private static instance: MqttClient;
 
-    client.on('connect', () => {
-        console.log('Connected to MQTT broker');
-        client.subscribe('test/topic', (err) => {
-            if (!err) {
-                console.log('Subscribed to topic');
-            } else {
-                console.error('Subscription error:', err);
-            }
-        });
+  public static getInstance(url: string):MqttClient {
+    if (!MqttInstance.instance) {
+      MqttInstance.instance = MqttAsync.createMqtt({
+        url,
+        clientId: 'mqtt-1',
+        persistenceType: 1
+      })
+    }
+    return MqttInstance.instance;
+  }
+}
+
+const MqttService = () => MqttInstance.getInstance("mqtt://139.9.223.17:1883")
+
+export class MQTT {
+  public connect(userName: string, password: string):Promise<MqttResponse> {
+    const ms = MqttService();
+    return ms.connect({
+      userName,
+      password,
+      connectTimeout: 30,
+      MQTTVersion: 0
+    })
+  }
+
+  public subscribe(topic: string, qos: MqttQos = 0):Promise<MqttResponse> {
+    const ms = MqttService();
+    return ms.subscribe({ topic, qos })
+  }
+
+  public async messageArrived():Promise<MqttMessage> {
+    const ms = MqttService();
+    return new Promise<MqttMessage>((resolve, reject) => {
+      ms.messageArrived((err, data: MqttMessage) => {
+        data ? resolve(data) : reject(err)
+      })
     });
+  }
 
-    client.on('message', (topic, message) => {
-        console.log(`Received message: ${message.toString()} on topic: ${topic}`);
-    });
+  public pushMessage(topic: string, payload: string, qos: MqttQos = 0):Promise<MqttResponse> {
+    const ms = MqttService();
+    return ms.publish({ topic, payload, qos });
+  }
 
-    client.on('error', (err) => {
-        console.error('MQTT error:', err);
-    });
-
-    client.on('close', () => {
-        console.log('MQTT connection closed');
-    });
+  public async destroy():Promise<boolean> {
+    const ms = MqttService();
+    return ms.destroy();
+  }
 }

@@ -1,4 +1,4 @@
-import { connectMQTT } from './MQTT.ets';
+import { connectMQTT } from './MQTT';
 @Entry
 @Component
 struct Index {
